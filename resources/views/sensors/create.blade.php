@@ -31,7 +31,7 @@
                                 
                                 <label class="col-sm-2 col-form-label">{{ __('Description') }}</label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="description" id="input-password" type="text" placeholder="{{ __('(Opcional)') }}"  required autofocus/>
+                                    <input class="form-control" name="description" id="input-password" type="text" placeholder="{{ __('(Obligatorio)') }}"  required autofocus/>
                                 </div>                        
                             </div>
                             <div class="row" style="margin-top:30px" >

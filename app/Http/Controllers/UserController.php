@@ -24,7 +24,7 @@ class UserController extends Controller
         'password'=>bcrypt($request->input('password')),
         ]);
         //return redirect ()-> route('users.index')->with('success','Usuario creado con exito');
-        return redirect ()-> route('users.index')->with('notification','Usuario creado con exito');
+        return redirect()->route('users.index')->with('notification','Usuario creado con exito');
         //return back()->with('notification','Usuario creado exitosamente');
     }
     public function show(User $user){//$id){
@@ -32,20 +32,22 @@ class UserController extends Controller
         // dd($user);
         return view('users.show',compact('user'));
     }
-    
+    public function edit($id){
+        $user=User::findOrFail($id);
+        return view('users.edit',compact('user'));
+    }
     public function update(Request $request, $id){
         $user=User::findOrFail($id);
         $user->name=$request->input('name');
+        $user->username=$request->input('username');
+        $user->email=$request->input('email');
+        $user->role=$request->input('role');
         $password=$request->input('password');
         if($password){
             $user->password=bcrypt($password);
         }
         $user->save();
-        return redirect ()-> route('users.index')->with('notification','Usuario modificado con éxito');
-    }
-    public function edit($id){
-        $user=User::findOrFail($id);
-        return view('users.edit',compact('user'));
+        return redirect()->route('users.index')->with('notification','Usuario modificado con éxito');
     }
     public function destroy(User $user){
         $usu= User::find($user->id);

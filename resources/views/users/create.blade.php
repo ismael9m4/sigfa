@@ -15,9 +15,9 @@
                             <div class="col-xs-12 col-md-6" style="text-align:center"> 
                                 <!-- Grupo: Usuario -->
 			                        <div class="formulario__grupo" id="grupo__usuario">
-				                        <label for="usuario" class="formulario__label" style="font-weight: 700; color:black; width:100%">Usuario</label>
+				                        <label for="username" class="formulario__label" style="font-weight: 700; color:black; width:100%">Usuario</label>
 				                        <div class="formulario__grupo-input">
-					                        <input  type="text" class="formulario__input" name="usuario" id="usuario" placeholder="john123">
+					                        <input  type="text" class="formulario__input" name="username" id="username" placeholder="john123">
 					                        <i class="formulario__validacion-estado fas fa-times-circle"></i>
 				                        </div>
 				                        <p class="formulario__input-error" style="display:none">El usuario tiene que ser de 4 a 16 dígitos y solo puede contener numeros, letras y guion bajo.</p>
@@ -26,9 +26,9 @@
                             <div class="col-xs-12 col-md-6" style="text-align:center"> 
                                 <!-- Grupo: Nombre -->
 			                        <div class="formulario__grupo" id="grupo__nombre">
-				                        <label for="nombre" class="formulario__label" style="font-weight: 700; color:black" >Apellido y Nombre</label>
+				                        <label for="name" class="formulario__label" style="font-weight: 700; color:black" >Apellido y Nombre</label>
 				                        <div class="formulario__grupo-input">
-					                        <input type="text" class="formulario__input" name="nombre" id="nombre" placeholder="John Doe">
+					                        <input type="text" class="formulario__input" name="name" id="name" placeholder="John Doe">
 					                        <i class="formulario__validacion-estado fas fa-times-circle"></i>
 				                        </div>
 				                        <p class="formulario__input-error" style="display:none">El apellido y nombre tiene que ser de 4 a 16 dígitos y solo puede contener letras y espacio.</p>
@@ -63,9 +63,9 @@
                             <div class="col-xs-12 col-md-6" style="text-align:center"> 
                                 <!-- Grupo: Correo Electronico -->
 			                        <div class="formulario__grupo" id="grupo__correo">
-				                        <label for="correo" class="formulario__label" style="font-weight: 700; color:black">Correo Electrónico</label>
+				                        <label for="email" class="formulario__label" style="font-weight: 700; color:black">Correo Electrónico</label>
 				                        <div class="formulario__grupo-input">
-					                        <input type="email" class="formulario__input" name="correo" id="correo" placeholder="correo@correo.com">
+					                        <input type="email" class="formulario__input" name="email" id="email" placeholder="correo@correo.com">
 					                        <i class="formulario__validacion-estado fas fa-times-circle"></i>
 				                        </div>
 				                        <p class="formulario__input-error" style="display:none">El correo solo puede contener letras, numeros, puntos, guiones y guion bajo.</p>

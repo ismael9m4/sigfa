@@ -44,18 +44,30 @@ class LeakageController extends Controller
         Leakage::create($request->only('stimad_less','datetime','cause','details',
         'fk_category','fk_pipeline')
         );
-        return redirect ()-> route('leakages.index')->with('success','Fuga guardada con exito');
+        return redirect()->route('leakages.index')->with('notification','Fuga creada con exito');
     }
 
     public function show($id){
-        //
+        $leakage=Leakage::findOrFail($id);
+        return view('leakages.show',compact('leakage'));
     }
 
     public function edit($id){
-        //
+        $categories=Category::all();
+        $leakage=Leakage::find($id);
+        $pipelines=Pipeline::all();
+        return view('leakages.edit',compact('categories','leakage','pipelines'));
     }
     public function update(Request $request, $id){
-        //
+        $leakage=Leakage::find($id);
+        $leakage->fk_category=$request->get('fk_category');
+        $leakage->cause=$request->get('cause');
+        $leakage->stimad_less=$request->get('stimad_less');
+        $leakage->details=$request->get('details');
+        $leakage->datetime=$request->get('datetime');
+        $leakage->fk_pipeline=$request->get('fk_pipeline');
+        $leakage->save();
+        return redirect()->route('leakages.index')->with('notification','Fuga modificada con exito');
     }
     public function destroy($id){
         $fuga= Leakage::find($id);

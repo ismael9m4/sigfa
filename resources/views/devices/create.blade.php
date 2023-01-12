@@ -20,7 +20,7 @@
                                 
                                 <label class="col-sm-2 col-form-label">{{ __('Numero de Serie') }}</label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="serie" type="text" placeholder="{{ __('Ingrese N° de serie') }}"  required autofocus/>
+                                    <input class="form-control" name="serie" type="number" placeholder="{{ __('Ingrese N° de serie') }}"  required autofocus/>
                                 </div>                             
                             </div>
                             <div class="row" style="margin-top:30px">
@@ -35,7 +35,7 @@
                             <div class="row" style="margin-top:30px" >
                                 <label for="email" class="col-sm-2 col-form-label" style="margin-left:50px" >Detalles</label>
                                 <div class="col-sm-6">
-                                    <textarea  name="details" class="form-control"  placeholder="Ingrese Descripcion" rows="4">{{old('details')}}</textarea>    
+                                    <textarea  name="details" class="form-control"  pplaceholder="{{ __('(Obligatorio)') }}"  rows="4" required="required">{{old('details')}}</textarea>    
                                 </div>
                                 
                                             

@@ -32,7 +32,7 @@
                                 
                                 <label class="col-sm-2 col-form-label">{{ __('Contraseña: ') }}<em>Ingresar Solo si se desea modificar contraseña</em></label>
                                 <div class="col-sm-3">
-                                    <input class="form-control" name="password" id="input-password" type="password" placeholder="{{ __('Ingrese Contraseña') }}" value=""  autofocus/>
+                                    <input class="form-control" name="password" id="input-password" type="password" placeholder="{{ __('Opcional') }}" value=""  autofocus/>
                                 </div>                        
                             </div>
                             <div class="row" style="margin-top:30px">

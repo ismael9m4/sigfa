@@ -75,12 +75,12 @@
               <p>{{ __('Categorias') }}</p>
             </a>
           </li>
-          <li class="nav-item{{ $activePage == 'levels' ? ' active' : '' }}">
+          <!--<li class="nav-item{{ $activePage == 'levels' ? ' active' : '' }}">
             <a class="nav-link" href="{{route('levels.index')}}">
             <i class="material-icons">poll</i>
               <p>{{ __('Niveles') }}</p>
             </a>
-          </li>
+          </li>-->
           </ul>
         </div>
       </li>

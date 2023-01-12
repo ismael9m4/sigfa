@@ -12,9 +12,9 @@
                                 <p class="card-category">Reportadas y Denunciadas</p>
                             </div>
                             <div class="card-body">
-                            @if(session('success'))
+                            @if(session('notification'))
                             <div class="alert alert-success" role="success">
-                                {{session('success')}}
+                                {{session('notification')}}
                             </div>
                             @endif
                             <div class="row">
@@ -42,10 +42,10 @@
                                                 <td>{{$leakage->stimad_less}}</td>
                                                 <td class="td-actions text-right">
                                                     
-                                                    <a href="#" class="btn btn-info" title="Ver"> <i class="material-icons">remove_red_eye</i></a>
-                                                    <button class="btn btn-warning" title="Editar" type="button">
+                                                    <a href="{{ route('leakages.show',$leakage->id)}}"  class="btn btn-info" title="Ver"> <i class="material-icons">remove_red_eye</i></a>
+                                                    <a class="btn btn-warning" href="{{route('leakages.edit',$leakage->id)}}" title="Editar" type="button">
                                                         <i class="material-icons">edit</i>
-                                                    </button>
+                                                    </a>
                                                     <a data-target="#modal-delete-{{$leakage->id}}" data-toggle="modal"><button class="btn btn-danger" title="Eliminar"><i class="material-icons" style="color:#FFFFFF">delete</i></button>
                                                 </td>
                                             </tr>
