@@ -245,7 +245,7 @@
                 </div> 
                 <div class="card">
                         <div class="card-title">
-                            <h5 style="text-align: center ; font-size: 1em;"><strong>FUGAS REALES</strong></h5>
+                            <h5 style="text-align: center ; font-size: 1em;"><strong>FUGAS POR DENUNCIA</strong></h5>
                         </div>
                         <div class="card card-stats">
                             <div class="card-header card-header-warning card-header-icon">

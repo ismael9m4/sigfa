@@ -19,7 +19,7 @@ class HomeController extends Controller
     public function index(){
         $sensores=cantidadS();
         $sensoresd=cantidadSD();
-        $incidentes=cantidadI();
+        $fugas=cantidadI();
         $detecciones=cantidadD();
         $users=cantidadU();
         //dump(graficoPeriodo(01,02));
@@ -35,6 +35,12 @@ class HomeController extends Controller
         $perdidas4=graficoPeriodoP(7,8);
         $perdidas5=graficoPeriodoP(9,10);
         $perdidas6=graficoPeriodoP(11,12);
+        $presion1=graficoPeriodoPr(1,2);
+        $presion2=graficoPeriodoPr(3,4);
+        $presion3=graficoPeriodoPr(5,6);
+        $presion4=graficoPeriodoPr(7,8);
+        $presion5=graficoPeriodoPr(9,10);
+        $presion6=graficoPeriodoPr(11,12);
         $fugas1=graficoPeriodoF(1,2);
         $fugas2=graficoPeriodoF(3,4);
         $fugas3=graficoPeriodoF(5,6);
@@ -45,9 +51,13 @@ class HomeController extends Controller
         $zonas=zonas();
         $nivel=nivelzonariesgo();
         $variacion=variacionD();
+        $valvula= cantidadValvula()*100;
+        $estadovalvula = estadoValvula();
         $i=0;
-        return view('home',compact('sensores','sensoresd','incidentes','detecciones','users',
-        'perdidas1','perdidas2','perdidas3','perdidas4','perdidas5','perdidas6','incidentes1','incidentes2','incidentes3','incidentes4'
+        return view('home',compact('sensores','sensoresd','fugas','detecciones','users',
+        'perdidas1','perdidas2','perdidas3','perdidas4','perdidas5','perdidas6',
+        'presion1','presion2','presion3','presion4','presion5','presion6','valvula','estadovalvula'
+        ,'incidentes1','incidentes2','incidentes3','incidentes4'
         ,'incidentes5','incidentes6','fugas1','fugas2','fugas3','fugas4','fugas5','i','fugas6','usersmy','zonas','nivel','variacion',
         ));
         //return view('home',['abonos'=>$abonos]);
@@ -71,7 +81,7 @@ class HomeController extends Controller
                     [
                       "label" => "Lecturas", 
                       "data" => cantidadLectura(),
-                      "backgroundColor" => ['#27ae60', '#f1c40f', '#e74c3c']
+                      "backgroundColor" => ['#ffffff', '#f1c40f', '#e74c3c','#27ae60']
                     ], 
                   ],
                 ],

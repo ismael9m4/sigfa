@@ -18,7 +18,7 @@ class ReadingController extends Controller
         $readings=DB::table('sensors')
             ->join('devices', 'sensors.fk_device', '=', 'devices.id')
             ->join('readings', 'readings.fk_sensor', '=', 'sensors.id')
-            ->select('readings.id', 'readings.date', 'readings.value','readings.unit','devices.id as serie','sensors.type')
+            ->select('readings.id', 'readings.created_at', 'readings.value','readings.unit','devices.id as serie','sensors.type')
             ->get();
         return view('readings.index',compact('readings'));
     }

@@ -15,7 +15,7 @@
             </div>
             <div class="card-footer">
               <div class="stats">
-                <i class="material-icons">sensors</i> Disponibles
+                <i class="material-icons">sensors</i> Disponibles/Total
               </div>
             </div>
           </div>
@@ -26,12 +26,12 @@
               <div class="card-icon">
                 <i class="material-icons">perm_phone_msg</i>
               </div>
-              <p class="card-category">Fugas Reales</p>
-              <h3 class="card-title">{{$incidentes}}</h3>
+              <p class="card-category">Fugas</p>
+              <h3 class="card-title">{{$fugas}}</h3>
             </div>
             <div class="card-footer">
               <div class="stats">
-                <i class="material-icons">date_range</i> En las ultimas 24 Hs
+                <i class="material-icons">app_registration</i> Registradas en el Sistema
               </div>
             </div>
           </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="card-footer">
               <div class="stats">
-                <i class="material-icons">local_offer</i> Hoy
+                <i class="material-icons">local_offer</i> Cantidad Total hasta la fecha
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
             <div class="card-body">
               <h4 class="card-title">Lecturas de Sensores</h4>
               <p class="card-category">
-                <span class="text-success"><i class="fa fa-long-arrow-up"></i>  {{$variacion}}%</span> Variante a Hoy.</p>
+                <span class="text-success"><i class="fa fa-long-arrow-up"></i>  {{$variacion}}%</span> Variante de Caudal.</p>
             </div>
             <div class="card-footer">
               <div class="stats">
@@ -122,6 +122,40 @@
           </div>
         </div>
       </div>
+      <div class="row" >
+      <div class="col-md-6">
+          <div class="card card-chart">
+            <div class="card-header card-header-dark">
+              <canvas  id="lecturaValvula"></canvas>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Indicador de Válvula</h4>
+              <p class="card-category">Estado:{{$estadovalvula}}</p>
+            </div>
+            <div class="card-footer">
+              <div class="stats">
+                <i class="material-icons">access_time</i> Hasta la fecha
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-chart">
+            <div class="card-header card-header-info">
+              <canvas  id="lecturaPresion"></canvas>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Lectura de Sensores</h4>
+              <p class="card-category">Ultimas Lecturas de Presion</p>
+            </div>
+            <div class="card-footer">
+              <div class="stats">
+                <i class="material-icons">access_time</i> Hasta la fecha
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-lg-6 col-md-12">
           <div class="card">
@@ -150,10 +184,9 @@
                 @foreach($zonas as $zona)
                   <tr>
                     <td>{{$zona->neighborhood}}</td>
-                    <td>{{$zona->id}}</td>
+                    <td style="text-align:center">{{$zona->id}}</td>
                     <td>{{$zona->created_at}}</td>
-                    <td>{{$nivel['nivel'][$i]}}</td>
-                    {{$i++}}
+                    <td style="text-align:center">{{$nivel['nivel'][$i++]}}</td>
                   </tr>
                   @endforeach
                 </tbody>

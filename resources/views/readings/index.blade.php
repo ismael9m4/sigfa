@@ -21,7 +21,7 @@
                                 <table class="table" id="lecturas">
                                     <thead class="text-secundary" style="color:#F44336">
                                         <th>ID</th>
-                                        <th>Fecha</th>
+                                        <th>Fecha y Hora</th>
                                         <th>Valor de Lectura</th>
                                         <th>Unidad</th>
                                         <th>Sensor</th>
@@ -32,7 +32,7 @@
                                         @foreach($readings as $reading)
                                             <tr>
                                                 <td>{{$reading->id}}</td>
-                                                <td>{{$reading->date}}</td>
+                                                <td>{{$reading->created_at}}</td>
                                                 <td>{{number_format($reading->value,5,",",".")}}</td>
                                                 <td>{{$reading->unit}}</td>
                                                 <td>{{$reading->type}}</td>

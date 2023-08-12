@@ -39,7 +39,8 @@
         <script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!--   Core JS Files   -->
         <script src="{{ asset('js/core/jquery.min.js') }}"></script>
         <script src="{{ asset('js/core/popper.min.js') }}"></script>
@@ -90,6 +91,9 @@
         <script src="https://cdn.datatables.net/responsive/2.2.6/js/responsive.bootstrap4.min.js"></script>
         <!-- Chart JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-gauge/1.0.2/chartjs-plugin-gauge.js"></script>
+        <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.js"></script>
+        <script src="https://unpkg.com/chartjs-gauge@0.3.0/dist/chartjs-gauge.js"></script>
         <script type="text/javascript" >
             var ctx2= document.getElementById("perdidaFuga").getContext("2d");
             Chart.defaults.global.defaultFontColor='white';
@@ -152,13 +156,8 @@
                         @else
                             [0,0,0,0,0,0,0,0,0,0],
                         @endif
-                        backgroundColor:[
-                        'rgb(255, 255, 255)','rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)','rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)','rgb(255, 255, 255)','rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)','rgb(255, 255, 255)','rgb(255, 255, 255)',
-                        'rgb(255, 255, 255)','rgb(255, 255, 255)','rgb(255, 255, 255)',
-                        ],
+                        
+                        backgroundColor:false,//Color debajo de la curva
                         color:'rgb(255, 255, 255)'
                     }]
                 },
@@ -226,6 +225,129 @@
                 
             });
         </script>
+<!--El comienzo del fin -->
+<script>
+var randomScalingFactor = function() {
+  return Math.round(Math.random() * 100);
+};
+
+var randomData = function () {
+  return [
+    randomScalingFactor(),
+    randomScalingFactor(),
+    randomScalingFactor(),
+    randomScalingFactor()
+  ];
+};
+
+var randomValue = function (data) {
+  return Math.max.apply(null, data) * Math.random();
+};
+
+var data = [25,50,75,100];
+var value = @if(isset($valvula))
+            [{{$valvula}}]
+            @endif
+
+var config = {
+  type: 'gauge',
+  data: {
+    //labels: ['Success', 'Warning', 'Warning', 'Error'],
+    datasets: [{
+      data: data,
+      value: value,
+      backgroundColor: ['green', 'yellow', 'orange', 'red'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Gauge chart'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      // Needle circle radius as the percentage of the chart area width
+      radiusPercentage: 2,
+      // Needle width as the percentage of the chart area width
+      widthPercentage: 3.2,
+      // Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
+      lengthPercentage: 80,
+      // The color of the needle
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      formatter: Math.round
+    }
+  }
+};
+
+window.onload = function() {
+  var ctx = document.getElementById('lecturaValvula').getContext('2d');
+  window.myGauge = new Chart(ctx, config);
+};
+
+document.getElementById('randomizeData').addEventListener('click', function() {
+  config.data.datasets.forEach(function(dataset) {
+    dataset.data = randomData();
+    dataset.value = randomValue(dataset.data);
+  });
+
+  window.myGauge.update();
+});
+
+</script>
+<!--El comienzo del fin -->
+        <script type="text/javascript" >
+            var ctx2= document.getElementById("lecturaPresion").getContext("2d");
+            Chart.defaults.global.defaultFontColor='white';
+            Chart.defaults.global.legend.display = false;
+            var lecturaPresion= new Chart(ctx2,{
+                
+                type:"line",
+                data:{
+                    labels:['En-Fb','Mr-Ab','My-Jn','Jl-Ag','Set-Oc','Nv-Dc'],
+                    datasets:[{
+                        borderColor:'white',
+                        data:@if(isset($presion1))
+                            [{{$presion1}},{{$presion2}},{{$presion3}},{{$presion4}},{{$presion5}},{{$presion6}}],
+                        @else
+                            [0,0,0,0,0,0,0,0,22,0],
+                        @endif
+                        
+                            
+                        lineTension: 0,
+                        pointStyle:'circle',
+                        backgroundColor:false,
+                        color:'rgb(255, 255, 255)'
+                        
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{ 
+                            gridLines: {
+                                color:"rgba(255,255,255,0.2)" // <-- Color eje X
+                            }
+                            }],
+                        yAxes: [{
+                            ticks:{
+                                beginAtZero:true
+                            },
+                            gridLines: {
+                                color:"rgba(255,255,255,0.2)" // <-- Color eje Y
+                                        },
+                                }],
+                        } 
+                    }
+                
+            });
+        </script>
         <script>
             $('#usuarios').DataTable({
                 responsive: true,
@@ -258,6 +380,40 @@
                 'previous':'Anterior'
             }
         }
+            });
+        </script>
+        <script>
+            
+            $(document).ready(function() {
+                
+                $('#prediccion-btn').click(function() {
+                    
+                    $.ajax({
+                        type: 'GET', 
+                        url: '{{ route('panels.prediccion') }}',
+                        success: function(data) {
+                        },
+                        error: function() {
+                        }
+                    });
+                });
+            });
+        </script>
+        <script>
+            
+            $(document).ready(function() {
+                
+                $('#deteccion-btn').click(function() {
+                    
+                    $.ajax({
+                        type: 'GET', 
+                        url: '{{ route('panels.deteccion') }}',
+                        success: function(data) {
+                        },
+                        error: function() {
+                        }
+                    });
+                });
             });
         </script>
         @stack('js')

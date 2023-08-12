@@ -10,7 +10,196 @@ use App\Models\Detection;
 use App\Models\Pipeline;
 use App\Models\Incident;
 use Illuminate\Support\Arr;
+use App\Notifications\DetectNotification;
 
+function getIdSensores(){//Funcionando y usandose
+    $sensores= Sensor::select("id")->distinct()->get();
+    if($sensores != null){
+        return $sensores;
+    }else{
+        return false;
+    }
+    
+}
+function variacionCaudalDiurno($sensoresId){//Funcionando y usandose
+    //$sensores_con_fuga=[];
+    $sensores_con_fuga=0;
+    try{
+        $diferencia = DB::table('readings')
+        ->select(DB::raw('(SELECT readings.value FROM readings WHERE (readings.unit = "L/min") AND (readings.fk_sensor = '.$sensoresId.') ORDER BY readings.created_at DESC LIMIT 1) - (SELECT readings.value FROM readings WHERE (readings.unit = "L/min") AND (readings.fk_sensor = '.$sensoresId.') ORDER BY created_at DESC LIMIT 1,1) AS diferencia'))
+        ->value('diferencia');
+            if(abs($diferencia)>1.10){
+                //$sensores_con_fuga = Arr::add($sensores_con_fuga,'id',$id);
+                return 30;
+            }else{
+                return 0;//No se detecto variaciones
+            }            
+    }catch(Throwable $e){
+        return "Hay un grave error SQL en Caudal Diurno";
+    }  
+}
+function variacionCaudalNocturno($sensoresId){//Funcionando y usandose
+    try{
+        $diferencia = DB::table('readings')
+        ->select(DB::raw('(SELECT readings.value FROM readings WHERE (TIME(readings.created_at) BETWEEN "00:01:00" AND "03:00:00") AND (readings.unit = "L/min") AND (readings.fk_sensor = '.$sensoresId.') ORDER BY readings.created_at DESC LIMIT 1) - (SELECT readings.value FROM readings WHERE (TIME(readings.created_at) BETWEEN "00:01:00" AND "03:00:00") AND (readings.unit = "L/min") AND (readings.fk_sensor = '.$sensoresId.') ORDER BY created_at DESC LIMIT 1,1) AS diferencia'))
+        ->value('diferencia');
+            if(abs($diferencia)>0.1){
+                return 20;
+            }else{
+                return 0;//No se detecto variaciones
+            }            
+    }catch(Throwable $e){
+        return "Hay un grave error SQL en Caudal Nocturno";
+    }  
+}
+function variaciondePresion($sensoresId){//Funcionando y usandose
+    try{
+        $diferencia = DB::table('readings')
+        ->select(DB::raw('(SELECT readings.value FROM readings WHERE 
+        (readings.unit = "kPa") AND (readings.fk_sensor = '.$sensoresId.') 
+        ORDER BY readings.created_at DESC LIMIT 1) - (SELECT readings.value 
+        FROM readings WHERE (readings.unit = "kPa") AND (readings.fk_sensor = '.$sensoresId.') 
+        ORDER BY created_at DESC LIMIT 1,1) AS diferencia'))
+        ->value('diferencia');
+            if(abs($diferencia)>0.01){
+                return 20;
+            }else{
+                return 0;//No se detecto variaciones
+            }            
+    }catch(Throwable $e){
+        return "Hay un grave error SQL en Presion";
+    } 
+}
+function variaciondeValvula($sensoresId){//Funcionando y usandose
+    try{
+        $diferencia = DB::table('readings')
+        ->select(DB::raw('(SELECT readings.value FROM readings WHERE 
+        (readings.unit = "Vuelta") AND (readings.fk_sensor = '.$sensoresId.') 
+        ORDER BY readings.created_at DESC LIMIT 1) - (SELECT readings.value 
+        FROM readings WHERE (readings.unit = "Vuelta") AND (readings.fk_sensor = '.$sensoresId.') 
+        ORDER BY created_at DESC LIMIT 1,1) AS diferencia'))
+        ->value('diferencia');
+            if(abs($diferencia)>0.01){
+                return 20;
+            }else{
+                return 0;//No se detecto variaciones
+            }            
+    }catch(Throwable $e){
+        return "Hay un grave error SQL en Valvula";
+    } 
+}
+function antecedentes($sensoresId){
+    try{
+        $resultado = DB::table('sensors')
+        ->join('devices', 'sensors.fk_device', '=', 'devices.id')
+        ->join('pipelines', 'devices.fk_pipeline', '=', 'pipelines.id')
+        ->join('leakages', 'pipelines.id', '=', 'leakages.fk_pipeline')
+        ->select('sensors.id')
+        ->where('sensors.id', $sensoresId)
+        ->get();
+            if(count($resultado)>0){
+                return 10;
+            }else{
+                return 0;//No se encontro antecedentes
+            }            
+    }catch(Throwable $e){
+        return "Hay un grave error SQL en Antecedentes";
+    } 
+}
+function test2(){
+    $sensores=getIdSensores();//Devuelve los id de todo los sensores
+    //$resultado = Arr::get($array_sensores_con_variacion_caudal,'id');
+    $total=variacionCaudalDiurno('"8050238"')+variacionCaudalNocturno('"8050238"')+variaciondePresion('"8050239"')+variaciondeValvula('"8050240"')+antecedentes("8050238");
+    if($total >70){
+        
+        //Crear registro de deteccion
+        $hoy = Carbon::today();
+        Detection::create([
+            'cause' => "Deteccion por calculo de Sistema Informatico",
+            'id_sensor' => "8050238",
+            'neighborhood' => "S. S. de Jujuy",
+            'created_at'=> $hoy,
+            'positiong' => "",
+            'variacionpresion' =>"",
+            'variacionvalvula' =>"",
+            'id_device' =>"8050237"
+        ]);
+        return 1;
+    }else{
+        return 0;
+    }
+    
+}
+function test3(){
+    $sensores=getIdSensores();//Devuelve los id de todo los sensores
+    //$resultado = Arr::get($array_sensores_con_variacion_caudal,'id');
+    $total=variacionCaudalDiurno('"8050238"')+variacionCaudalNocturno('"8050238"')+variaciondePresion('"8050239"')+variaciondeValvula('"8050240"')+antecedentes("8050238");
+    if($total >70){
+        return 1;
+    }else{
+        return 0;
+    }
+    
+}
+function test4(){
+    //Crear registro de deteccion
+    $hoy = Carbon::now();
+    Detection::create([
+        'cause' => "Deteccion por calculo de Sistema Informatico",
+        'id_sensor' => "8050238",
+        'neighborhood' => "S. S. de Jujuy",
+        'created_at'=> $hoy,
+        'positiong' => "",
+        'variacionpresion' =>"",
+        'variacionvalvula' =>"",
+        'id_device' =>"8050237"
+    ]);
+}
+function test5(){
+    //Crear registro de prediccion
+    $hoy = Carbon::now();
+     // Ejecutar la sentencia SQL con Auth::id()
+     $usuario = Auth::user()->name;
+     if(consultaConsumoDistrib()===false){
+        DB::statement("INSERT INTO predictions (username, probability, fk_pipeline, created_at) VALUES ('$usuario', '10%','1', '$hoy')");
+     }else{
+        $calculo=consultaConsumoDistrib();
+        DB::statement("INSERT INTO predictions (username, probability, fk_pipeline, created_at) VALUES ('$usuario', '$calculo','1', '$hoy')");
+     }
+     
+}
+function estadoValvula(){
+    $sensor = Sensor::where('id', 8050240)->value('state');
+    return $sensor;
+}
+////Pruebita
+function test(){
+    //1-Obtener todos los Id de todos sensores [en array]
+    //2-Calcular de c/sensor la variacion de caudal diurno
+    //3-Calcular de c/sensor la variacion de caudal nocturno
+    //4-Calcular de lecturas la variacion de presion
+    //5-Calcular de lecturas la variacion de valvula
+    //6-Calcular antecedentes de los id sensores
+    $hoy = Carbon::today();
+    $lecturas=DB::table('sensors')
+            ->join('devices', 'sensors.fk_device', '=', 'devices.id')
+            ->join('readings', 'readings.fk_sensor', '=', 'sensors.id')
+            ->join('pipelines', 'devices.fk_pipeline', '=', 'pipelines.id')
+            ->select('readings.id', 'readings.date', 'readings.value','readings.unit','readings.date','devices.id as serie','sensors.type'
+            ,'pipelines.neighborhood','pipelines.district')
+            ->orderBy('readings.created_at', 'desc')
+            ->limit(24)
+            ->where('sensors.type', 'Consumo')
+            ->whereDate('date', '=', $hoy)
+            ->get();
+    $diferencia = DB::table('sensors')
+    ->join('devices', 'sensors.fk_device', '=', 'devices.id')
+    ->join('readings', 'readings.fk_sensor', '=', 'sensors.id')
+    ->join('pipelines', 'devices.fk_pipeline', '=', 'pipelines.id')
+    ->select(DB::raw('(SELECT readings.value FROM readings ORDER BY readings.created_at DESC LIMIT 1) - (SELECT readings.value FROM readings ORDER BY created_at DESC LIMIT 1,1) AS diferencia'))
+    ->value('diferencia');
+    return $diferencia-1;
+}
 function predictor(){
     try {
     $probabilidadHoy=0;
@@ -30,7 +219,7 @@ function predictor(){
             ->where('district', 'A - Las Peras')
             ->whereDate('date', '=', $hoy)
             ->get();
-            $lecturasNocturnas=DB::table('sensors')
+    $lecturasNocturnas=DB::table('sensors')
             ->join('devices', 'sensors.fk_device', '=', 'devices.id')
             ->join('readings', 'readings.fk_sensor', '=', 'sensors.id')
             ->join('pipelines', 'devices.fk_pipeline', '=', 'pipelines.id')
@@ -45,7 +234,7 @@ function predictor(){
             ->whereTime('hour', '<' ,'23:59:59')
             ->whereDate('date', '=', $hoy)
             ->get();
-            $lecturasAyer=DB::table('sensors')
+    $lecturasAyer=DB::table('sensors')
             ->join('devices', 'sensors.fk_device', '=', 'devices.id')
             ->join('readings', 'readings.fk_sensor', '=', 'sensors.id')
             ->join('pipelines', 'devices.fk_pipeline', '=', 'pipelines.id')
@@ -58,7 +247,7 @@ function predictor(){
             ->where('district', 'A - Las Peras')
             ->whereDate('date', '=', $ayer)
             ->get();
-            $lecturasNocturnasAyer=DB::table('sensors')
+    $lecturasNocturnasAyer=DB::table('sensors')
             ->join('devices', 'sensors.fk_device', '=', 'devices.id')
             ->join('readings', 'readings.fk_sensor', '=', 'sensors.id')
             ->join('pipelines', 'devices.fk_pipeline', '=', 'pipelines.id')
@@ -215,13 +404,24 @@ function detector(){
     function calculoVolumenNeto(){
         try{
             $hoy = Carbon::today();//->addYears(1);
+            $hoy2 = Carbon::now()->toDateString();
             $semanapasada = Carbon::today()->subWeek(1);
             $promedio1 = Reading::where('unit', 'L/min')
             ->whereDate('date', '=', $hoy)->avg('value');
             $promedio2 = Reading::where('unit', 'L/min')
             ->whereDate('date', '=', $semanapasada)->avg('value');
+            $fechaLimite = Carbon::today()->subDays(14)->format('Y-m-d');
+            $full = Reading::where('unit', 'L/min')
+                ->whereNotNull('value')
+                ->where('value', '<>', 0)
+                ->whereDate('created_at', '>=', $fechaLimite)
+                ->where(function ($query) {
+                    $query->whereTime('created_at', '>=', '00:00:00')
+                        ->whereTime('created_at', '<=', '23:59:59');
+                })
+                ->avg('value');
             if(($promedio1==null) || $promedio2==null){
-                return 0;
+                return $full;
             }
             $promedioNeto1=$promedio1*60*24;//Volumen Distribuido aprox en Litros
             $promedioNeto2=$promedio2*60*24;
@@ -234,18 +434,36 @@ function detector(){
     function calculoVolumenPromedio(){
             try{
                 $hoy = Carbon::today();//->addYears(1);
+                $hoy2 = Carbon::now()->toDateString();
                 $semanapasada = Carbon::today()->subWeek(1);
-                $promedio1 = Reading::where('unit', 'L/min')
-                ->whereDate('date', '=', $hoy)->avg('value');
+                $promedio1 = DB::table('readings')
+                ->selectRaw('AVG(value) as average_value')
+                ->where('unit', 'L/min')
+                ->whereBetween(DB::raw('TIME(created_at)'), ['06:00:00', '20:59:00'])
+                ->get();
+            
                 $promedio2 = Reading::where('unit', 'L/min')
                 ->whereDate('date', '=', $semanapasada)->avg('value');
-                if(($promedio1==null) || $promedio2==null){
-                    return 0;
+                
+                $fechaLimite = Carbon::today()->subDays(14)->format('Y-m-d');
+                $diurno = Reading::where('unit', 'L/min')
+                    ->whereNotNull('value')
+                    ->where('value', '<>', 0)
+                    ->whereDate('created_at', '>=', $fechaLimite)
+                    ->where(function ($query) {
+                        $query->whereTime('created_at', '>=', '06:00:00')
+                            ->whereTime('created_at', '<=', '20:59:59');
+                    })
+                    ->avg('value');
+
+                if(($promedio1[0]->average_value==null) || $promedio2==null){
+                    //return $promedio1[0]->average_value;
+                    return $diurno;
                 }
                 $promedioMedio1=$promedio1*60*1;
                 $promedioMedio2=$promedio2*60*1;
                 $diferencia=abs($promedioMedio1-$promedioMedio2);
-                return $diferencia;
+                return 0;
             }catch(Throwable $e){
     
             }
@@ -253,6 +471,7 @@ function detector(){
     function calculoVolumenNocturno(){
         try{
             $hoy = Carbon::today();//->addYears(1);
+            $hoy2 = Carbon::now()->toDateString();
             $semanapasada = Carbon::today()->subWeek(1);
             $promedio1 = Reading::where('unit', 'L/min')
             ->whereDate('date', '=', $hoy)
@@ -264,13 +483,32 @@ function detector(){
             ->whereTime('hour', '>', '20:00:00')
             ->whereTime('hour', '<' ,'23:59:59')
             ->avg('value');
+            $fechaLimite = Carbon::today()->subDays(14)->format('Y-m-d');
+            $nocturno1 = Reading::where('unit', 'L/min')
+                ->whereNotNull('value')
+                ->where('value', '<>', 0)
+                ->whereDate('created_at', '>=', $fechaLimite)
+                ->where(function ($query) {
+                    $query->whereTime('created_at', '>=', '00:00:00')
+                        ->whereTime('created_at', '<=', '03:59:59');
+                })
+                ->avg('value');
+            $nocturno2 = Reading::where('unit', 'L/min')
+                    ->whereNotNull('value')
+                    ->where('value', '<>', 0)
+                    ->whereDate('created_at', '>=', $fechaLimite)
+                    ->where(function ($query) {
+                        $query->whereTime('created_at', '>=', '21:00:00')
+                            ->whereTime('created_at', '<=', '23:59:59');
+                    })
+                    ->avg('value');
             if(($promedio1==null) || $promedio2==null){
-                return 0;
+                return ($nocturno1+$nocturno2)/2;
             }
             $promedioNoct1=$promedio1*60*4;//Volumen Distribuido en la Noche aprox en Litros
             $promedioNoct2=$promedio2*60*4;
             $diferencia=abs($promedioNoct1-$promedioNoct2);
-            return $diferencia;
+            return $diferencia+50;
         }catch(Throwable $e){
 
         }
@@ -534,8 +772,9 @@ function detector(){
         return $sensores;
     }
     function cantidadI(){
-        $incidentes=count(Leakage::all());
-        return $incidentes;
+        //$incidentes=count(Leakage::all());
+        $fugas=count(Leakage::where('removed', '0')->get());
+        return $fugas;
     }
     function cantidadD(){
         $deteccion=count(Detection::all());
@@ -586,6 +825,7 @@ function detector(){
     }
     function cantidadLectxmes($mes){//Valores de Lecturas por mes
         $cantidad = Reading::select('value')->
+        where('unit', '=','L/min')->
         whereYear('date', '=', anioActual())
         ->whereMonth('date', '=', $mes);
         return $cantidad->avg('value');
@@ -596,8 +836,23 @@ function detector(){
         ->whereMonth('created_at', '=', $mes)->sum('stimad_less');
         return $cantidad;
     }
+    function cantidadPrxmes($mes){
+        $cantidad = Reading::select('value')->
+        where('unit', '=','kPa')->
+        whereYear('date', '=', anioActual())
+        ->whereMonth('date', '=', $mes);
+        return $cantidad->avg('value');
+    }
+    function cantidadValvula(){
+        $cantidad = Reading::where('unit', '=', 'Vuelta')->sum('value');
+        return $cantidad;
+    }
     function graficoPeriodoP($mes1,$mes2){
         $suma=cantidadPxmes($mes1)+cantidadPxmes($mes2);
+        return $suma;
+    }
+    function graficoPeriodoPr($mes1,$mes2){
+        $suma=cantidadPrxmes($mes1)+cantidadPrxmes($mes2);
         return $suma;
     }
     function graficoPeriodoI($mes1,$mes2){//Inutilizado
@@ -649,7 +904,8 @@ function detector(){
     }
     function cantfugaAñoActual(){
         $añoActual=date('Y', strtotime('now'));
-        $deteccion = count(DB::table('leakages')->whereYear('created_at','=',$añoActual)->get());
+        $deteccion = count(DB::table('leakages')->where('removed','=',0)
+        ->whereYear('created_at','=',$añoActual)->get());
         return $deteccion;
     }
     function nivelxdeteccion($zona){
@@ -783,7 +1039,24 @@ function detector(){
         foreach ($fugas as $fuga) {
             $data[]= $fuga->total;
         }
-        return $data;
+        //------------------------------------
+        $fugas = DB::table('leakages')
+        ->join('categories', 'leakages.fk_category', '=', 'categories.id')
+        ->select('categories.name', DB::raw('COUNT(*) as total'))
+        ->groupBy('categories.name')
+        ->where('leakages.removed', '=', 0)
+        ->where('categories.removed','=',0)
+        ->get();
+
+$data = $fugas->pluck('total')->toArray();
+
+// Si solo hay una categoría, devuelve un array con un solo elemento
+if (count($data) === 1) {
+    return [$data[0]];
+}
+
+return $data;
+
     }
     function mesesLecturas(){ //Obtiene array de meses del presente año de lecturas
         $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
@@ -810,22 +1083,67 @@ function detector(){
         return [$mes1,$mes2,$mes3,$mes4];
     }
     function cantidadLectura(){//Obtiene la cantidad de lecturas por mes
-        $mesnumero1 = date('m', strtotime('-3 month'));//MES ACTUAL -3 EN NUMERO
-        $mesnumero2 = date('m', strtotime('-2 month'));//MES ACTUAL -2 EN NUMERO
-        $mesnumero3 = date('m', strtotime('-1 month'));//MES ACTUAL -1 EN NUMERO
-        $mesnumero4 = date('m', strtotime('now'));//MES ACTUAL EN NUMERO
-        $añoActual=date('Y', strtotime('now'));
-        $lectura1 = DB::table('readings')->whereMonth('date','=',$mesnumero1)
-        ->whereYear('date','=',$añoActual)
-        ->where('unit','=','L/min')->count();
-        $lectura2 = DB::table('readings')->whereMonth('date','=',$mesnumero2)
-        ->whereYear('date','=',$añoActual)
-        ->where('unit','=','L/min')->count();
-        $lectura3 = DB::table('readings')->whereMonth('date','=',$mesnumero3)
-        ->whereYear('date','=',$añoActual)
-        ->where('unit','=','L/min')->count();
-        $lectura4 = DB::table('readings')->whereMonth('date','=',$mesnumero4)
-        ->whereYear('date','=',$añoActual)
-        ->where('unit','=','L/min')->count();
-        return [$lectura1,$lectura2,$lectura3,$lectura4];
+       
+        // -------------------------------------------------------------
+            // Obtener las fechas de los últimos 4 meses
+            $fechaActual = Carbon::now();
+            $ultimos4Meses = [];
+            for ($i = 0; $i < 4; $i++) {
+                $ultimos4Meses[] = $fechaActual->copy()->subMonths($i)->format('Y-m');
+            }
+
+            // Consulta para obtener el array con la cantidad de lecturas de los últimos 4 meses
+            $lecturasUltimos4Meses = DB::table('readings')
+                ->where('created_at', '>=', $fechaActual->copy()->subMonths(3)->startOfMonth())
+                ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") AS month, COUNT(*) AS count')
+                ->groupBy('month')
+                ->pluck('count', 'month')
+                ->toArray();
+
+            // Completar el array con ceros para los meses sin registros
+            $resultado = [];
+            foreach ($ultimos4Meses as $mes) {
+                $resultado[] = $lecturasUltimos4Meses[$mes] ?? 0;
+            }
+
+            // Ordenar el array en forma ascendente (mes más antiguo al presente)
+            $resultado = array_reverse($resultado);
+
+            // Resultado
+                    //return [22.3,32.4,0.1,0.54];
+                    return $resultado;
     }
+
+    function pruebita($entrada){
+        if($entrada != 0){
+            return true;
+        }
+    }
+    function detectarFugaDeAgua($giroValvula, $presion, $caudal)
+{
+    // Definir los valores límite
+    $giroValvulaMinimo = 0;
+    $giroValvulaMaximo = 0.5;
+    $presionMinima = 0;
+    $presionMaxima = 100;
+    $caudalMinimo = 0;
+    $caudalMaximo = 10;
+
+    // Comprobar los valores límite
+    $giroValvulaValido = ($giroValvula >= $giroValvulaMinimo) && ($giroValvula <= $giroValvulaMaximo);
+    $presionValida = ($presion >= $presionMinima) && ($presion <= $presionMaxima);
+    $caudalValido = ($caudal >= $caudalMinimo) && ($caudal <= $caudalMaximo);
+
+    // Detectar la fuga de agua
+    $fugaDeAgua = $giroValvulaValido && $presionValida && $caudalValido;
+
+    return $fugaDeAgua;
+}
+
+function enviarNotificacion($cantidadFuga){
+    if($cantidadFuga > 0){
+        return true;
+    }else{
+    return false;
+    }
+}

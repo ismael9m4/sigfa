@@ -23,7 +23,7 @@
                                             <p class="description">
                                             {{$notifis->created_at}} <br>
                                             {{$notifis->data['title']}} <br>
-                                            {{$notifis->data['numerofugas']}} <br>
+                                            {{$notifis->data['description']}} <br>
                                             @if(($notifis->read_at) === null)
                                                         {{'Leida:No'}}
                                                     @else

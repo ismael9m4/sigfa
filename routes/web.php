@@ -46,6 +46,10 @@ Route::group(['middleware'=>'admin',['namespace'=>'Admin']],function(){
     Route::resource('sensors',SensorController::class);
     Route::resource('readings',ReadingController::class);
     Route::resource('panels',PanelController::class);
+    // Ruta para la función prediccion()
+    Route::get('panels/prediccion', [PanelController::class, 'prediccion'])->name('panels.prediccion');
+    // Ruta para la función deteccion()
+    Route::get('panels/deteccion', [PanelController::class, 'deteccion'])->name('panels.deteccion');
     Route::resource('leakages',LeakageController::class);
     Route::resource('detections',DetectionController::class);
     Route::resource('categories',CategoryController::class);
@@ -65,6 +69,7 @@ Route::get('/levels/create', [App\Http\Controllers\LevelController::class, 'crea
 Route::post('/levels/create', [App\Http\Controllers\LevelController::class, 'store'])->name('levels.store');
 
 Route::get('/prediccion',[App\Http\Controllers\PanelController::class, 'prediccion'])->name('panels.prediccion');
+Route::get('/deteccion',[App\Http\Controllers\PanelController::class, 'deteccion'])->name('panels.deteccion');
 Route::get('/redimiento',[App\Http\Controllers\PanelController::class, 'rendimiento'])->name('panels.rendimiento');
 Route::get('/notificaciones',[App\Http\Controllers\PanelController::class, 'notificaciones'])->name('panels.notificaciones');
 Route::get('/shownotificaciones/{id}',[App\Http\Controllers\PanelController::class, 'shownotificaciones'])->name('panels.shownotificaciones');

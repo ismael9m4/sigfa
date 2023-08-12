@@ -59,6 +59,7 @@ class DetectNotification extends Notification
             'numerofugas' => count(sensores()),
             'title'=> "Nueva Deteccion!",
             'time'=>Carbon::now()->diffForHumans(),
+            'description'=> "Para ver mas datos de la deteccion, ve al listado de detecciones",
         ];
     }
 }

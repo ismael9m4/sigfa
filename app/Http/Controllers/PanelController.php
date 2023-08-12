@@ -15,8 +15,10 @@ class PanelController extends Controller
     }
     
     public function prediccion(){
-        predictor();
-        
+        test5();
+    }
+    public function deteccion(){
+        test4();
     }
     public function rendimiento(){
         $volumenNeto=CalculoVolumenNeto();
@@ -28,8 +30,11 @@ class PanelController extends Controller
         $volumenNeto=CalculoVolumenNeto();
         $volumenPromedio=CalculoVolumenPromedio();
         $volumenNocturno=calculoVolumenNocturno();
-        $cantidadFugas=count(fugaexistio(sensores()));
         $prediccion=consultaConsumoDistrib();
+        //$cantidadFugas=count(fugaexistio(sensores()));
+        //Probar las test
+            $cantidadFugas =  test3();
+            //$guardarPrediccion=test4();
         //dd(consultaConsumoDistribNeto());
         return view('controlpanel.index',compact('volumenNeto','volumenPromedio','volumenNocturno','cantidadFugas','prediccion',));
         //$respues=detection(8050239);

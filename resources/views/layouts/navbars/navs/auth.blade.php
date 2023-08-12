@@ -27,9 +27,9 @@
           <a class="nav-link" href="#" title="Notificaciones" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="material-icons">notifications</i>
             <span class="notification">
-              @if (count(auth()->user()->unreadNotifications)){
-                <span >{{ count(auth()->user()->unreadNotifications) }}</span>
-              @endif
+                @if (count(auth()->user()->unreadNotifications) > 0)
+                    <span>{{ count(auth()->user()->unreadNotifications) }}</span>
+                @endif
             </span>
             <p class="d-lg-none d-md-block">
               {{ __('Notificaciones') }}

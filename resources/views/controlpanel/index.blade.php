@@ -31,7 +31,7 @@
                                                     <div class="card-footer ml-auto mr-auto" >
                                                     <!-- Inicio Modal-->
                                                     <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-danger" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <button type="button" class="btn btn-danger" id="deteccion-btn" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                     Detector de Fuga
                                                     </button>
                                                     <!-- Modal -->
@@ -45,7 +45,11 @@
                                                             <form>
                                                             <div class="modal-body">
                                                                 <div class="row mb-6">
-                                                                <label for="inputEmail3" class="col-sm-12 col-form-label" style="background-color:#FFFFFF;text-align:center">Se ha detectado ({{$cantidadFugas}}) nuevas amenaza/s de fuga</label>
+                                                                @if ($cantidadFugas === 0)
+                                                                <label for="inputEmail3" class="col-sm-12 col-form-label" style="background-color:#FFFFFF;text-align:center">Buena jornada! No se han detectado fugas</label>
+                                                                        @else
+                                                                        <label for="inputEmail3" class="col-sm-12 col-form-label" style="background-color:#FFFFFF;text-align:center">Se ha detectado una fuga</label>
+                                                                        @endif
                                                                 </div>
 
                                                                 <div class="row mb-6">
@@ -111,9 +115,10 @@
                                                     <div class="card-footer ml-auto mr-auto">
                                                         <!-- Inicio Modal-->
                                                     <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-danger" href="{{ route('panels.prediccion')}}" style="background-color:#ef6c00;text-align:center;margin-button:0px;color:#f5f5f5" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                                                    <button type="button" class="btn btn-danger" id="prediccion-btn"  style="background-color:#ef6c00;text-align:center;margin-button:0px;color:#f5f5f5" data-bs-toggle="modal" data-bs-target="#exampleModal2">
                                                     Predictor de Fuga
                                                     </button>
+                                                    <!-- Script para manejar el evento de clic en el botón -->
                                                     <!-- Modal -->
                                                     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                         <div class="modal-dialog">
@@ -127,17 +132,17 @@
                                                                 <div class="row">
                                                                     <label for="colFormLabelLg" class="col-sm-8 col-form-label col-form-label-lg" style="text-align:center">
                                                                         @if($prediccion===false)
-                                                                            Resultado: {{0}} %
+                                                                            Resultado: {{10}} %
                                                                         @else
                                                                             Resultado: {{$prediccion*100}} %
                                                                         @endif</label>
                                                                 </div>
                                                                 <div class="row mb-3">
-                                                                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Hora</label>
+                                                                    <label for="colFormLabelSm" class="col-sm-6 col-form-label col-form-label-sm">Fecha: <?php echo date("d-m-Y ");?></label>
                                                                     <div class="col-sm-10">
-                                                                        <label for="colFormLabelSm" class="col-sm-4 col-form-label col-form-label-sm">Fecha</label>
+                                                                        <label for="colFormLabelSm" class="col-sm-6 col-form-label col-form-label-sm">Hora: <?php echo date(" H:i:s");?> </label>
                                                                     </div>
-                                                                    <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Lugar</label>
+                                                                    <label for="colFormLabelSm" class="col-sm-6 col-form-label col-form-label-sm">Lugar: A - LAS PERAS</label>
                                                                 </div>
                                                                 <div class="row mb-3">
                                                                     <label for="colFormLabel" class="col-sm-2 col-form-label">Usuario</label>
@@ -193,22 +198,23 @@
                                                             <form >
                                                                 <div class="modal-body" >
                                                                     <div class="row">
-                                                                        <label for="colFormLabelLg" class="col-sm-12 col-form-label col-form-label-lg" style="text-align:center">Indicadores de rendimiento</label>
+                                                                        <label for="colFormLabelLg" class="col-sm-12 col-form-label col-form-label-lg" style="text-align:center">Indicadores de rendimiento </label>
+                                                                        <label for="colFormLabelLg" class="col-sm-6 col-form-label col-form-label-sm" style="text-align:center">Distrito: A - LAS PERAS </label>
                                                                     </div>
                                                                 <div class="row mb-3">
-                                                                    <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm" style="text-align:center">Volumen Neto en la red:</label>
-                                                                    <div class="col-sm-10">
+                                                                    <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm" style="text-align:center">Caudal Neto en la red:</label>
+                                                                    <div class="col-sm-12">
                                                                     <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm" style="text-align:center">{{$volumenNeto}} L</label>                                                                    </div>
                                                                 </div>
                                                                     <div class="row mb-3">
-                                                                        <label for="colFormLabel" class="col-sm-12 col-form-label" style="text-align:center" >Volumen Promedio Total:</label>
-                                                                    <div class="col-sm-10">
+                                                                        <label for="colFormLabel" class="col-sm-12 col-form-label" style="text-align:center" >Caudal Promedio Total:</label>
+                                                                    <div class="col-sm-12">
                                                                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm" style="text-align:center">{{$volumenPromedio}} L</label>  
                                                                     </div>
                                                                     </div>
                                                                     <div class="row mb-3">
-                                                                        <label for="colFormLabel" class="col-sm-12 col-form-label" style="text-align:center">Volumen Nocturno Total:</label>
-                                                                    <div class="col-sm-10">
+                                                                        <label for="colFormLabel" class="col-sm-12 col-form-label" style="text-align:center">Caudal Nocturno Total:</label>
+                                                                    <div class="col-sm-12">
                                                                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm" style="text-align:center">{{$volumenNocturno}} L</label>  
                                                                     </div>
                                                                     </div>

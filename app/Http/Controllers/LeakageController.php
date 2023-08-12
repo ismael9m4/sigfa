@@ -17,6 +17,7 @@ class LeakageController extends Controller
     public function index(){
         $leakages=DB::table('leakages')
         ->select('leakages.id', 'leakages.stimad_less', 'leakages.cause','leakages.datetime')
+        ->where('removed', '0')
         ->get();
         return view('leakages.index',compact('leakages'));
     }
